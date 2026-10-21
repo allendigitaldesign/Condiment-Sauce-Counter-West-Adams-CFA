@@ -3,19 +3,21 @@
  *
  * Paste this whole file into the Sheet's Apps Script editor (Extensions →
  * Apps Script), run `setup` once, then deploy it as a web app. The README has
- * the clicks. The iPads talk to the web app address; nothing else is needed.
+ * the clicks. The iPads (and any other device) talk to the web app address; nothing else is needed.
  *
  * WHAT IT KEEPS
  *
  *   Daily Counts  one row per day, one column per item, plus a Total. The row
  *                 for a day appears the first time anyone taps that day.
- *   Tap Log       every change as it arrives — when, which iPad, which item,
- *                 how many — so Front Counter and Drive Thru can be told
- *                 apart, and a correction can always be traced.
+ *   Tap Log       every change as it arrives — when, which item, how many —
+ *                 so a correction can always be traced.
+ *
+ * Every device using the app — any number of iPads or phones — counts into
+ * the same numbers. None of them is told apart.
  *
  * THREE THINGS IT IS CAREFUL ABOUT
  *
- *  1. Two iPads tapping at the same moment. Every write happens inside the
+ *  1. Two devices tapping at the same moment. Every write happens inside the
  *     script lock, so one waits for the other instead of both reading "12",
  *     both adding one, and both writing "13".
  *  2. A tap sent twice. An iPad whose wifi drops mid-send cannot know whether
@@ -28,7 +30,6 @@
 var TIME_ZONE = 'America/Los_Angeles';
 var COUNTS_SHEET = 'Daily Counts';
 var LOG_SHEET = 'Tap Log';
-var STATIONS = ['Front Counter', 'Drive Thru'];
 
 /**
  * Everything the store counts. This list is written TWICE: here, and in
@@ -127,7 +128,7 @@ function doGet(e) {
 }
 
 /**
- * POST { opId, station, date, deltas: { itemId: n } } → that day's counts
+ * POST { opId, date, deltas: { itemId: n } } → that day's counts
  * after the change.
  *
  * Sent as text/plain rather than JSON on purpose: a JSON content type makes
@@ -160,7 +161,6 @@ function applyBatch(body) {
   var opId = String(body.opId || '');
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(opId)) throw new Error('Missing or malformed opId');
 
-  var station = STATIONS.indexOf(body.station) >= 0 ? body.station : 'Unknown';
   var day = dayFrom(body.date);
   var deltas = cleanDeltas(body.deltas);
 
@@ -197,7 +197,7 @@ function applyBatch(body) {
     values[columns.Total - 1] = sumCounts(counts);
     sheet.getRange(row, 1, 1, width).setValues([values]);
 
-    if (applied.length) logChanges(ss, day, station, applied);
+    if (applied.length) logChanges(ss, day, applied);
 
     SpreadsheetApp.flush();
     cache.put('op:' + opId, '1', 21600); // six hours — the longest the cache allows
@@ -227,7 +227,7 @@ function cleanDeltas(raw) {
 /**
  * One day's counts, from a short-lived cache when there is one.
  *
- * Both iPads ask every few seconds, and reading the Sheet is the slow part.
+ * Every device asks every few seconds, and reading the Sheet is the slow part.
  * Twenty seconds is short enough that a number typed into the Sheet by hand
  * shows on the iPads almost straight away, and every tap refreshes it anyway.
  */
@@ -326,7 +326,7 @@ function ensureLogSheet(ss) {
   var sheet = ss.getSheetByName(LOG_SHEET);
   if (!sheet) {
     sheet = ss.insertSheet(LOG_SHEET);
-    var labels = ['Timestamp', 'Date', 'Station', 'Category', 'Item', 'Change'];
+    var labels = ['Timestamp', 'Date', 'Category', 'Item', 'Change'];
     sheet.getRange(1, 1, 1, labels.length).setValues([labels]);
     styleHeader(sheet, labels.length);
   }
@@ -398,14 +398,14 @@ function findOrAddRow(sheet, day) {
   return row;
 }
 
-function logChanges(ss, day, station, applied) {
+function logChanges(ss, day, applied) {
   var sheet = ensureLogSheet(ss);
   var now = new Date();
   var rows = applied.map(function (entry) {
     var item = ITEMS[entry[0]];
-    return [now, day, station, item.category, item.label, entry[1]];
+    return [now, day, item.category, item.label, entry[1]];
   });
-  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 6).setValues(rows);
+  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 5).setValues(rows);
 }
 
 /* --- Set up, run once by hand --------------------------------------------- */

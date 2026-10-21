@@ -15,7 +15,11 @@ to `main`. **Not Vercel**: its free plan forbids commercial use.
 
 ## The iPads are the screens
 
-Two iPads, Front Counter and Drive Thru, usually landscape. At `≥900px` the
+Usually two store iPads in landscape, but **any number of devices** can run
+it, and **they are deliberately not told apart**: no station, no device
+name, nothing in the Tap Log saying where a tap came from. Every device adds
+into the same daily tallies. The owner asked for exactly that, so don't
+reintroduce per-device labels without asking. At `≥900px` the
 sections sit in two columns (`LANDSCAPE_COLUMNS` in `src/items.ts`) and fill
 the screen exactly. **All 31 items must fit at 1133×744 (iPad mini landscape)
 with no scrolling.** If you add an item or anything to the header, check that
@@ -50,7 +54,7 @@ portrait, 2 on a phone).
   dropped if a send started or finished while it was out (`epoch` in
   `src/store.ts`). Otherwise it can briefly count this iPad's taps twice or
   not at all. Polls are skipped while a send is in flight.
-- **Writes happen inside `LockService.getScriptLock()`.** Two iPads tapping
+- **Writes happen inside `LockService.getScriptLock()`.** Two devices tapping
   together would otherwise both read 12 and both write 13.
 - **Never use `Date.toISOString()` for a day.** Days are
   `America/Los_Angeles` `"YYYY-MM-DD"` strings (`src/dates.ts`, `today()` in
@@ -60,7 +64,7 @@ portrait, 2 on a phone).
   would display as `10/21/2026` and never match again.
 - **Counts never go below zero**, in the client (the − is refused) and in the
   script (clamped). The Tap Log records only what actually changed.
-- **Polling is every 5 s, only while the page is visible.** Reads go through
+- **Polling is every 3 s, only while the page is visible.** Reads go through
   a 20 s CacheService copy that every write refreshes, so the Sheet itself is
   read rarely. Watch the Apps Script quotas if you make it faster.
 - **A refused batch is dropped, not retried.** A network failure or a non-200

@@ -377,54 +377,6 @@ button {
   pointer-events: none;
 }
 
-/* --- Which iPad is this? ------------------------------------------------- */
-
-.picker {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: rgba(51, 41, 31, 0.45);
-}
-
-.picker-panel {
-  width: min(520px, 100%);
-  margin: 0;
-}
-
-.picker-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.picker-options:last-child {
-  margin-bottom: 0;
-}
-
-.picker-option {
-  min-height: 120px;
-  border-radius: var(--radius);
-  border: 2px solid var(--border);
-  background: var(--cream);
-  color: var(--red);
-  font-size: 19px;
-  font-weight: 800;
-}
-
-.picker-option:hover {
-  border-color: var(--red-light);
-}
-
-.picker-option.is-current {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--white);
-}
-
 /* --- Messages and footer ------------------------------------------------- */
 
 .notice {

@@ -5,9 +5,11 @@ window: dipping sauces, dressings, condiments, coffee condiments and utensils.
 **One tap on an item = one handed out.** Every count goes straight into a
 **Google Sheet**. There's no database.
 
-There are two iPads, one at the **Front Counter** and one at the **Drive
-Thru**, and they always show the same numbers. A tap on one shows up on the
-other within about five seconds. Counts start again at zero each day.
+**Every device using the app counts into the same tallies.** That's the two
+store iPads, or any other iPad or phone you open it on. They all show the
+same numbers, and a tap on one shows up on all the others within a few
+seconds. No device is labelled or set up differently. Counts start again at
+zero each day.
 
 It's styled like the Care Calendar (same red, same cream, same cards), and
 like the Care Calendar it's a website you add to the iPad's home screen so it
@@ -36,9 +38,6 @@ opens like a normal app.
   Sheet. If the wifi drops it says **Offline · 6 waiting**. Keep tapping: the
   taps are saved on the iPad, and they're added to the Sheet as soon as the
   wifi comes back, even if the iPad was restarted in between.
-- **Switch iPad** changes whether this iPad is labelled Front Counter or Drive
-  Thru. Both count into the same numbers. The label only tells the Sheet's Tap
-  Log where each tap came from.
 
 ## What ends up in the Google Sheet
 
@@ -46,8 +45,8 @@ Two tabs, which the script makes by itself:
 
 - **Daily Counts**: one row per day, one column per item, and a Total. Today's
   row appears with the first tap of the day.
-- **Tap Log**: every change as it came in, with the time, which iPad, the
-  item, and how many (a −1 shows up as a correction).
+- **Tap Log**: every change as it came in, with the time, the item, and how
+  many (a −1 shows up as a correction).
 
 You can add your own tabs, charts or formulas to the Sheet. Don't rename the
 two tabs or the item headings in row 1, because that's how the script finds
@@ -121,13 +120,13 @@ The deploy deliberately **fails** if `VITE_SHEET_URL` is missing, instead of
 publishing a demo version that would look right on the iPads while saving
 nothing to the Sheet.
 
-### Step 4: Set up the two iPads
+### Step 4: Set up the iPads
 
-On each iPad:
+On each iPad (or any other device that should count):
 
 1. Open the site in **Safari**, then **Share → Add to Home Screen**.
-2. Open it from the home screen and pick **Front Counter** or **Drive Thru**.
-   It remembers.
+2. Open it from the home screen. That's it. There's nothing to choose, and it
+   starts counting into the shared tallies straight away.
 3. **Settings → Display & Brightness → Auto-Lock → Never** if it sits on a
    stand. Landscape works best, since all 31 items fit on one screen.
 
@@ -182,7 +181,6 @@ version** (see Step 2). A new item gets its own new column on the end of
 | `src/store.ts` | Holds taps, sends them in batches, asks the Sheet for the other iPad's taps |
 | `src/backend.ts` | Talks to the Sheet, or to the browser in demo mode |
 | `src/screens/CounterScreen.tsx` | The counter itself |
-| `src/screens/StationPicker.tsx` | "Which iPad is this?" |
 | `src/components/ItemTile.tsx` | One item's tile, with its − button |
 | `src/styles.css` | All the styling, using the Care Calendar's colours |
 | `scripts/mock-sheet.mjs` | A pretend Sheet for trying it out locally |

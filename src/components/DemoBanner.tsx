@@ -22,12 +22,12 @@ export function DemoBanner() {
         <div className="demo-banner-detail">
           <p>
             The app hasn't been connected to its Google Sheet yet, so nothing
-            is shared. Everything you tap here stays in this browser, the other
-            iPad can't see it, and none of it reaches the Sheet.
+            is shared. Everything you tap here stays in this browser, other
+            devices can't see it, and none of it reaches the Sheet.
           </p>
           <p>
-            Once the Sheet is connected, this banner disappears and both iPads
-            count into the same numbers.
+            Once the Sheet is connected, this banner disappears and every
+            device using the app counts into the same numbers.
           </p>
         </div>
       )}

@@ -1,5 +1,6 @@
 /**
- * Keeps this iPad's numbers in step with the Sheet, and with the other iPad.
+ * Keeps this device's numbers in step with the Sheet, and with every other
+ * device using the app — all of them count into the same tallies.
  *
  * HOW A TAP TRAVELS
  *
@@ -19,14 +20,14 @@
  *
  *   the Sheet's last answer + the batch in flight + what is pending
  *
- * The other iPad's taps arrive by asking the Sheet every few seconds. An
+ * Every other device's taps arrive by asking the Sheet every few seconds. An
  * answer to that question is thrown away if a batch was sent or answered
  * while it was being asked, because it might then count this iPad's taps
  * twice (once in the Sheet's number, once in flight) or not at all.
  */
 
 import { useSyncExternalStore } from 'react';
-import { backend, isFailure, type Batch, type Counts, type Station } from './backend';
+import { backend, isFailure, type Batch, type Counts } from './backend';
 import { storeToday } from './dates';
 import { ALL_ITEMS } from './items';
 
@@ -34,7 +35,7 @@ const QUEUE_KEY = 'cfa-counter:queue';
 const LAST_KEY = 'cfa-counter:last';
 
 const SEND_AFTER_MS = 500;
-const POLL_EVERY_MS = 5000;
+const POLL_EVERY_MS = 3000;
 const DAY_CHECK_MS = 15000;
 
 export type SyncStatus = 'loading' | 'live' | 'saving' | 'offline';
@@ -82,7 +83,6 @@ function write(key: string, value: unknown): void {
 
 /* --- State ---------------------------------------------------------------- */
 
-let station: Station = 'Front Counter';
 let today = storeToday();
 let queue: Queue = read<Queue>(QUEUE_KEY, { pending: {}, inFlight: null });
 let last: Last | null = read<Last | null>(LAST_KEY, null);
@@ -178,7 +178,7 @@ async function send(): Promise<void> {
     // Oldest day first, so last night's offline taps go before this morning's.
     const day = Object.keys(queue.pending).sort()[0];
     if (!day) return;
-    queue.inFlight = { opId: newOpId(), station, date: day, deltas: queue.pending[day] };
+    queue.inFlight = { opId: newOpId(), date: day, deltas: queue.pending[day] };
     delete queue.pending[day];
     saveQueue();
   }
@@ -222,7 +222,7 @@ function remember(date: string, counts: Counts, sheetUrl?: string): void {
   write(LAST_KEY, last);
 }
 
-/* --- Hearing about the other iPad ----------------------------------------- */
+/* --- Hearing about the other devices -------------------------------------- */
 
 async function refresh(): Promise<void> {
   if (sending) return;
@@ -262,9 +262,8 @@ function checkDay(): void {
 
 let started = false;
 
-/** Begin syncing. Called once, when the counter screen first appears. */
-export function start(forStation: Station): void {
-  station = forStation;
+/** Begin syncing. Called once, when the app first appears. */
+export function start(): void {
   if (started) return;
   started = true;
 
@@ -272,7 +271,7 @@ export function start(forStation: Station): void {
   if (waitingTaps() > 0) scheduleSend(0);
 
   // Only while the screen is showing: a sleeping iPad asking the Sheet every
-  // five seconds all night is wasted effort for Google and for the battery.
+  // three seconds all night is wasted effort for Google and for the battery.
   window.setInterval(() => {
     if (document.visibilityState === 'visible') void refresh();
   }, POLL_EVERY_MS);
@@ -285,10 +284,6 @@ export function start(forStation: Station): void {
     }
   });
   window.addEventListener('online', () => void refresh());
-}
-
-export function setStation(next: Station): void {
-  station = next;
 }
 
 export function dismissProblem(): void {

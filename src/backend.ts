@@ -17,12 +17,9 @@ import { ITEM_IDS } from './items';
 
 export type Counts = Record<string, number>;
 
-export type Station = 'Front Counter' | 'Drive Thru';
-
 /** One batch of taps, sent together. `opId` lets the Sheet ignore a resend. */
 export type Batch = {
   opId: string;
-  station: Station;
   date: string;
   deltas: Counts;
 };

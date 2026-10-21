@@ -1,19 +1,14 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { backend, type Station } from '../backend';
+import { backend } from '../backend';
 import { dayLabel } from '../dates';
 import { counted, isMuted, onMuteChange, setMuted, uncounted } from '../feedback';
 import { CATEGORIES, LANDSCAPE_COLUMNS, type Category } from '../items';
 import { dismissProblem, tap, useCounter, type CounterState } from '../store';
 import { ItemTile } from '../components/ItemTile';
 
-type Props = {
-  station: Station;
-  onSwitchStation(): void;
-};
-
 const BY_ID = new Map(CATEGORIES.map((c) => [c.id, c]));
 
-export function CounterScreen({ station, onSwitchStation }: Props) {
+export function CounterScreen() {
   const state = useCounter();
   const [muted, setMutedState] = useState(isMuted());
   useEffect(() => onMuteChange(() => setMutedState(isMuted())), []);
@@ -36,7 +31,7 @@ export function CounterScreen({ station, onSwitchStation }: Props) {
           <div className="header-titles">
             <h1>Sauce &amp; Condiment Counter</h1>
             <p className="subtitle">
-              West Adams · {station} · {dayLabel(state.today)}
+              West Adams · {dayLabel(state.today)}
             </p>
           </div>
           <div className="header-buttons">
@@ -44,9 +39,6 @@ export function CounterScreen({ station, onSwitchStation }: Props) {
             <span className="header-total" aria-label={`${total} handed out today`}>
               <strong>{total}</strong> today
             </span>
-            <button type="button" className="header-link" onClick={onSwitchStation}>
-              Switch iPad
-            </button>
             <button
               type="button"
               className="header-link is-icon"

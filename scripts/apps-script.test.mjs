@@ -38,7 +38,7 @@ test('setup builds both tabs with every item as a column, in order', () => {
 
 test('running setup again changes nothing', () => {
   const { script, spreadsheet } = fresh();
-  post(script, { opId: opId(), station: 'Drive Thru', deltas: { ranch: 2 } });
+  post(script, { opId: opId(), deltas: { ranch: 2 } });
   const before = JSON.stringify(spreadsheet.sheets.map((s) => s.cells));
   script.setup();
   assert.equal(JSON.stringify(spreadsheet.sheets.map((s) => s.cells)), before);
@@ -49,10 +49,10 @@ test('the day is the Los Angeles day, not the UTC one', () => {
   assert.equal(get(script).date, '2026-10-21');
 });
 
-test('taps add up, write a row and a Total, and are logged per station', () => {
+test('taps from every device add up into one row, with a Total, and are logged', () => {
   const { script, spreadsheet } = fresh();
-  post(script, { opId: opId(), station: 'Front Counter', deltas: { 'cfa-sauce': 3, ketchup: 1 } });
-  const reply = post(script, { opId: opId(), station: 'Drive Thru', deltas: { 'cfa-sauce': 2 } });
+  post(script, { opId: opId(), deltas: { 'cfa-sauce': 3, ketchup: 1 } });
+  const reply = post(script, { opId: opId(), deltas: { 'cfa-sauce': 2 } });
 
   assert.equal(reply.ok, true);
   assert.equal(reply.counts['cfa-sauce'], 5);
@@ -69,9 +69,9 @@ test('taps add up, write a row and a Total, and are logged per station', () => {
   assert.deepEqual(
     log.map((r) => r.slice(1)),
     [
-      ['2026-10-21', 'Front Counter', 'Sauces', 'CFA Sauce', 3],
-      ['2026-10-21', 'Front Counter', 'Condiments', 'Ketchup', 1],
-      ['2026-10-21', 'Drive Thru', 'Sauces', 'CFA Sauce', 2],
+      ['2026-10-21', 'Sauces', 'CFA Sauce', 3],
+      ['2026-10-21', 'Condiments', 'Ketchup', 1],
+      ['2026-10-21', 'Sauces', 'CFA Sauce', 2],
     ],
   );
 });
@@ -79,42 +79,42 @@ test('taps add up, write a row and a Total, and are logged per station', () => {
 test('the same batch sent twice is only counted once', () => {
   const { script } = fresh();
   const id = opId();
-  post(script, { opId: id, station: 'Front Counter', deltas: { mayo: 4 } });
-  const again = post(script, { opId: id, station: 'Front Counter', deltas: { mayo: 4 } });
+  post(script, { opId: id, deltas: { mayo: 4 } });
+  const again = post(script, { opId: id, deltas: { mayo: 4 } });
   assert.equal(again.duplicate, true);
   assert.equal(again.counts.mayo, 4);
 });
 
 test('a correction never takes a count below zero, and logs what really changed', () => {
   const { script, spreadsheet } = fresh();
-  post(script, { opId: opId(), station: 'Front Counter', deltas: { honey: 1 } });
-  const reply = post(script, { opId: opId(), station: 'Front Counter', deltas: { honey: -3, salt: -1 } });
+  post(script, { opId: opId(), deltas: { honey: 1 } });
+  const reply = post(script, { opId: opId(), deltas: { honey: -3, salt: -1 } });
   assert.equal(reply.counts.honey, 0);
   assert.equal(reply.counts.salt, 0);
   const log = spreadsheet.getSheetByName('Tap Log').cells.slice(1);
-  assert.deepEqual(log.at(-1).slice(4), ['Honey', -1]);
+  assert.deepEqual(log.at(-1).slice(3), ['Honey', -1]);
   assert.equal(log.length, 2);
 });
 
 test('unknown items are ignored and silly numbers refused', () => {
   const { script } = fresh();
-  const reply = post(script, { opId: opId(), station: 'Front Counter', deltas: { gravy: 5, ranch: 1 } });
+  const reply = post(script, { opId: opId(), deltas: { gravy: 5, ranch: 1 } });
   assert.equal(reply.counts.gravy, undefined);
   assert.equal(reply.counts.ranch, 1);
-  const refused = post(script, { opId: opId(), station: 'Front Counter', deltas: { ranch: 100000 } });
+  const refused = post(script, { opId: opId(), deltas: { ranch: 100000 } });
   assert.equal(refused.ok, false);
-  assert.equal(post(script, { station: 'Front Counter', deltas: { ranch: 1 } }).ok, false);
+  assert.equal(post(script, { deltas: { ranch: 1 } }).ok, false);
 });
 
 test('a new day starts from zero in a new row; late taps land on their own day', () => {
   const { script, spreadsheet, clock } = fresh();
-  post(script, { opId: opId(), station: 'Front Counter', deltas: { sugar: 2 } });
+  post(script, { opId: opId(), deltas: { sugar: 2 } });
 
   clock.now = LATE_CLOSE + 12 * 3600 * 1000; // next morning
   assert.equal(get(script).counts.sugar, 0);
-  post(script, { opId: opId(), station: 'Front Counter', deltas: { sugar: 1 } });
+  post(script, { opId: opId(), deltas: { sugar: 1 } });
   // An iPad that was offline at close sends last night's tap this morning.
-  post(script, { opId: opId(), station: 'Drive Thru', date: '2026-10-21', deltas: { sugar: 1 } });
+  post(script, { opId: opId(), date: '2026-10-21', deltas: { sugar: 1 } });
 
   assert.equal(get(script, { date: '2026-10-21' }).counts.sugar, 3);
   assert.equal(get(script).counts.sugar, 1);
@@ -124,7 +124,7 @@ test('a new day starts from zero in a new row; late taps land on their own day',
 
 test('a date from the future is treated as today', () => {
   const { script } = fresh();
-  const reply = post(script, { opId: opId(), station: 'Front Counter', date: '2027-01-01', deltas: { forks: 1 } });
+  const reply = post(script, { opId: opId(), date: '2027-01-01', deltas: { forks: 1 } });
   assert.equal(reply.date, '2026-10-21');
 });
 
@@ -132,7 +132,7 @@ test('an item added to the list later gets its own new column', () => {
   const { script, spreadsheet } = fresh();
   const header = spreadsheet.getSheetByName('Daily Counts').cells[0];
   header.splice(header.indexOf('Spoons'), 1, ''); // pretend Spoons is new
-  post(script, { opId: opId(), station: 'Front Counter', deltas: { spoons: 2 } });
+  post(script, { opId: opId(), deltas: { spoons: 2 } });
   const after = spreadsheet.getSheetByName('Daily Counts').cells;
   assert.equal(after[0].at(-1), 'Spoons');
   assert.equal(after[1].at(-1), 2);

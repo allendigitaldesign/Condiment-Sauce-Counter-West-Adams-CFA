@@ -1,0 +1,16 @@
+{
+  "name": "Sauce & Condiment Counter — Chick-fil-A West Adams",
+  "short_name": "Sauce Counter",
+  "description": "Tap to count sauces, dressings, condiments, coffee condiments and utensils.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAF7F2",
+  "theme_color": "#E51636",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

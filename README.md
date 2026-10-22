@@ -120,30 +120,32 @@ address, and the iPads would keep using the old one.
 
 ### Step 3: Put it on the web
 
-The site is meant to be hosted on **Cloudflare Pages** (free, and its free plan
-allows business use), the same way as the Care Calendar. Pushing to `main`
-publishes it automatically once three secrets are set on this GitHub repo
-(**Settings → Secrets and variables → Actions → New repository secret**):
+The site is hosted free on **GitHub Pages**, from this repository. The repo is
+public, which is what makes Pages free; there's nothing private in it.
+Pushing to `main` publishes the site automatically, at:
 
-| Secret | What it is |
-| --- | --- |
-| `VITE_SHEET_URL` | the `/exec` web app address from Step 2 |
-| `CLOUDFLARE_ACCOUNT_ID` | the Cloudflare account to host it in (same one as the Care Calendar) |
-| `CLOUDFLARE_API_TOKEN` | a token with **Account · Cloudflare Pages · Edit** permission |
+**https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/**
 
-Make the token at <https://dash.cloudflare.com/profile/api-tokens> → Create
-Token → Custom token. The site then lives at
-**https://cfa-condiment-counter.pages.dev**.
+It needs two things set once, both in this repo's **Settings**:
 
-The deploy deliberately **fails** if `VITE_SHEET_URL` is missing, instead of
-publishing a demo version that would look right on the iPads while saving
-nothing to the Sheet.
+1. **Pages → Build and deployment → Source: GitHub Actions.**
+2. **Secrets and variables → Actions → New repository secret**, named
+   `VITE_SHEET_URL`, with the `/exec` web app address from Step 2 as the value.
+
+The publish deliberately **fails** if `VITE_SHEET_URL` is missing, instead of
+putting up a demo version that would look right on the iPads while saving
+nothing to the Sheet. If that happens, add the secret, then open the
+**Actions** tab → **Deploy to GitHub Pages** → **Run workflow** to try again.
+
+Counts are not part of this. They live in the Sheet, so publishing never
+touches them. Only changes to the app itself need publishing.
 
 ### Step 4: Set up the iPads
 
 On each iPad (or any other device that should count):
 
-1. Open the site in **Safari**, then **Share → Add to Home Screen**.
+1. Open **https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/**
+   in **Safari**, then **Share → Add to Home Screen**.
 2. Open it from the home screen. That's it. There's nothing to choose, and it
    starts counting into the shared tallies straight away.
 3. **Settings → Display & Brightness → Auto-Lock → Never** if it sits on a

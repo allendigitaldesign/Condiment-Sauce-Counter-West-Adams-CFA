@@ -1,9 +1,12 @@
-# Builds and publishes the Sauce Counter whenever main changes.
+# Builds and publishes the Sauce Counter to GitHub Pages whenever main changes.
 #
-# Push to main, and a couple of minutes later both iPads have it. Three
-# secrets make this work — see README, "Publishing a change".
+# Push to main, and a couple of minutes later every device has it, at
+# https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/
+#
+# Needs one repository secret, VITE_SHEET_URL (the Sheet's /exec web app
+# address), and Settings → Pages → Source set to "GitHub Actions".
 
-name: Deploy to Cloudflare Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -11,16 +14,20 @@ on:
   # Lets the deploy be re-run from the Actions tab without pushing anything.
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 # Two pushes in quick succession would otherwise race, and whichever finished
 # last would win regardless of which was newer.
 concurrency:
-  group: deploy-cloudflare-pages
+  group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v5
 
@@ -44,7 +51,7 @@ jobs:
           VITE_SHEET_URL: ${{ secrets.VITE_SHEET_URL }}
         run: |
           if [ -z "$VITE_SHEET_URL" ]; then
-            echo "::error::VITE_SHEET_URL is not set."
+            echo "::error::The VITE_SHEET_URL secret is not set (Settings → Secrets and variables → Actions)."
             echo "::error::Building without it would ship demo mode to the store."
             exit 1
           fi
@@ -54,13 +61,18 @@ jobs:
           VITE_SHEET_URL: ${{ secrets.VITE_SHEET_URL }}
         run: npm run build
 
-      - name: Deploy to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          # Creates the Pages project the first time; harmless after that.
-          npx wrangler pages project create cfa-condiment-counter --production-branch=main || true
-          npx wrangler pages deploy dist \
-            --project-name=cfa-condiment-counter \
-            --branch=main
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

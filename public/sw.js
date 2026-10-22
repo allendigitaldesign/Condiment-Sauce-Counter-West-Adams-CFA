@@ -13,7 +13,7 @@
  * THE WHITE SCREEN THIS FILE USED TO CAUSE
  *
  * Vite gives every build's JavaScript a new filename, and index.html is the
- * only thing that knows which. Cloudflare Pages drops the old files when a new
+ * only thing that knows which. GitHub Pages drops the old files when a new
  * build goes up. So a cached index.html and a live network are a bad pair: the
  * page asks for the script it remembers, the server says 404, and a 404 is a
  * perfectly successful HTTP response — nothing throws, no fallback runs, the
@@ -29,15 +29,20 @@
  * away the shell it has been hoarding.
  */
 
-const CACHE = 'cfa-counter-v1';
+const CACHE = 'cfa-counter-v2';
+
+/* Every path is relative to this file, because the site lives in a folder on
+ * GitHub Pages (/Condiment-Sauce-Counter-West-Adams-CFA/) rather than at the
+ * root of its own address. A "/" here would point at github.io itself. */
+const SHELL_PAGE = new URL('./index.html', self.location).href;
 
 const SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-180.png',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/icon-180.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -79,7 +84,7 @@ self.addEventListener('fetch', (event) => {
           // whenever this iPad was first set up.
           if (request.mode === 'navigate') {
             const shell = response.clone();
-            void caches.open(CACHE).then((cache) => cache.put('/index.html', shell));
+            void caches.open(CACHE).then((cache) => cache.put(SHELL_PAGE, shell));
           }
 
           return response;
@@ -101,7 +106,7 @@ self.addEventListener('fetch', (event) => {
         // An unvisited page while offline still gets the app shell, which can
         // render the rest from its own cache.
         if (request.mode === 'navigate') {
-          const shell = await caches.match('/index.html');
+          const shell = await caches.match(SHELL_PAGE);
           if (shell) return shell;
         }
         return Response.error();

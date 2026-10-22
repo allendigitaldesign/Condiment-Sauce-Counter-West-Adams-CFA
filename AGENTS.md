@@ -9,9 +9,21 @@ separate project: different repo, no shared code, no shared data.
 
 Data lives in a **Google Sheet**, on purpose. There is no database. The
 Sheet's bound Apps Script (`apps-script/Code.gs`) is deployed as a web app
-and is the only backend. Hosted on **Cloudflare Pages** (project
-`cfa-condiment-counter`), deployed by `.github/workflows/deploy.yml` on push
-to `main`. **Not Vercel**: its free plan forbids commercial use.
+and is the only backend. Hosted on **GitHub Pages** from this (public) repo,
+at `https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/`,
+deployed by `.github/workflows/pages.yml` on push to `main`. It needs the
+`VITE_SHEET_URL` repository secret and Pages' source set to GitHub Actions.
+**Not Vercel**: its free plan forbids commercial use. (Cloudflare Pages, as
+the Care Calendar uses, was the first plan; the owner chose Pages instead to
+skip a second account.)
+
+**The site lives in a folder, not at a root.** Every path must be relative:
+`base: './'` in `vite.config.ts`, `./` links in `index.html`, relative
+`start_url`/`scope`/icons in `public/manifest.json`, the service worker
+registered via `import.meta.env.BASE_URL`, and its cache paths resolved
+against its own location. A leading `/` anywhere points at `github.io` itself
+and breaks the home-screen icon, the manifest or offline start-up, with no
+error on screen.
 
 ## The iPads are the screens
 
@@ -111,5 +123,5 @@ as the store's own UI.
 
 The owner is not a professional developer. Explain in plain language, say
 where a command goes ("in a terminal"), and run local commands yourself where
-you can. Anything that needs their Google or Cloudflare sign-in has to be
+you can. Anything that needs their Google or GitHub sign-in has to be
 called out as theirs to do.

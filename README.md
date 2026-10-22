@@ -21,7 +21,7 @@ opens like a normal app.
 
 | Section | Items |
 | --- | --- |
-| Sauces | CFA Sauce, Ranch, BBQ, Polynesian, Sriracha, Honey Mustard, Honey Roasted BBQ |
+| Sauces | CFA Sauce, Ranch, BBQ, Polynesian, Sriracha, Honey Mustard, Honey Roasted BBQ, Syrup |
 | Dressings | Avocado Lime Ranch, Garden & Herb Ranch, FF Honey Mustard, Light Balsamic, Light Italian, Zesty Apple Cider, Creamy Salsa |
 | Condiments | Ketchup, Mayo, Mustard, Grape Jelly, Strawberry Jelly, Honey, Texas Pete, Salsa, Salt, Pepper |
 | Coffee Condiments | Half & Half, French Vanilla, Sugar, Splenda |
@@ -142,6 +142,10 @@ touches them. Only changes to the app itself need publishing.
 
 ### Step 4: Set up the iPads
 
+`docs/sauce-counter-qr.html` is a printable card with a QR code for the app.
+Scan it with an iPad's Camera instead of typing the address. The bare code is
+`docs/sauce-counter-qr.png`.
+
 On each iPad (or any other device that should count):
 
 1. Open **https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/**
@@ -149,7 +153,7 @@ On each iPad (or any other device that should count):
 2. Open it from the home screen. That's it. There's nothing to choose, and it
    starts counting into the shared tallies straight away.
 3. **Settings → Display & Brightness → Auto-Lock → Never** if it sits on a
-   stand. Landscape works best, since all 31 items fit on one screen.
+   stand. Landscape works best, since all 32 items fit on one screen.
 
 ---
 
@@ -198,7 +202,7 @@ version** (see Step 2). A new item gets its own new column on the end of
 | File | What it does |
 | --- | --- |
 | `apps-script/Code.gs` | The Sheet side: reads and adds to the day's counts, writes the Tap Log |
-| `src/items.ts` | The 31 items and the sections they sit in |
+| `src/items.ts` | The 32 items and the sections they sit in |
 | `src/store.ts` | Holds taps, sends them in batches, asks the Sheet for the other iPad's taps |
 | `src/backend.ts` | Talks to the Sheet, or to the browser in demo mode |
 | `src/screens/CounterScreen.tsx` | The counter itself |

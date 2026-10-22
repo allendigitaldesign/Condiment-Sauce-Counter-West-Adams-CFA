@@ -35,6 +35,15 @@ portrait, 2 on a phone).
 - **The Sheet finds columns by the header label**, not by position. Renaming
   a label starts a new column, and the old one stops updating. Missing labels
   get appended automatically.
+- **`Code.gs` gets pasted by hand, and a partial paste is the likeliest
+  failure.** It once came back as `ReferenceError: TIME_ZONE is not defined`
+  because the top of the file never reached the editor. So the file opens
+  with a `START OF Code.gs` marker and its settings, ends with an `END OF
+  Code.gs` marker, and `checkWholeFilePasted_()` (kept at the very bottom, so
+  any paste that includes `setup` includes it) turns a missing top into a
+  plain instruction. Keep the markers as the first and last lines, keep
+  settings at the top, and keep top-level code `typeof`-guarded. `npm test`
+  tries a paste starting at every line.
 - **Changing `Code.gs` does nothing until it is redeployed** as a new
   *version* of the *same* deployment (Manage deployments → Edit). A new
   deployment gets a new URL, and the iPads keep calling the old one. The

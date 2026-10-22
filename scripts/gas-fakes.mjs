@@ -137,8 +137,11 @@ function formatDate(date, timeZone, pattern) {
 /**
  * A fresh copy of the script with its own empty spreadsheet and cache.
  * `now` can be swapped to pretend it is another day.
+ *
+ * `fromLine` loads the file starting part-way down, the way it arrives in the
+ * Apps Script editor when the copy missed its first lines.
  */
-export function loadScript() {
+export function loadScript({ fromLine = 1 } = {}) {
   const spreadsheet = new FakeSpreadsheet();
   const cache = new Map();
   const clock = { now: null };
@@ -198,7 +201,8 @@ export function loadScript() {
   };
 
   vm.createContext(context);
-  vm.runInContext(readFileSync(CODE, 'utf8'), context, { filename: 'Code.gs' });
+  const source = readFileSync(CODE, 'utf8').split('\n').slice(fromLine - 1).join('\n');
+  vm.runInContext(source, context, { filename: 'Code.gs' });
 
   return { script: context, spreadsheet, cache, clock };
 }

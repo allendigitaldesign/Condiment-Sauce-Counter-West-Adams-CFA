@@ -65,16 +65,35 @@ It takes about ten minutes, once.
    Name it something like `CFA West Adams — Sauce Counts`.
 2. In the menu click **Extensions → Apps Script**. A code editor opens in a
    new tab.
-3. Delete what's in the editor. Open `apps-script/Code.gs` from this project,
-   copy **all** of it, and paste it in. Press the 💾 **Save** icon.
-4. At the top, in the dropdown next to **Run**, choose **`setup`**, then
+3. **Clear the editor completely.** Select everything in it, including the
+   sample `function myFunction() { }`, and delete it, so the editor is empty.
+4. **Copy the whole script in one go.** Open `apps-script/Code.gs` on GitHub
+   and press the **Copy raw file** button (the two-overlapping-squares icon
+   in the bar just above the code). That copies every line, which
+   drag-selecting a long file, especially on an iPad, often doesn't. Paste it
+   into the empty editor.
+5. **Check both ends.** Line 1 must say
+   `// ===== START OF Code.gs (Sauce Counter) =====`. Scroll to the very
+   bottom: the last line must say
+   `// ===== END OF Code.gs — if you can see this, everything was pasted =====`.
+   If either is missing, go back to step 3. Then press the 💾 **Save** icon.
+6. At the top, in the dropdown next to **Run**, choose **`setup`**, then
    press **Run**.
    Google will ask for permission: **Review permissions →** pick your
    account **→ Advanced → Go to (project name) → Allow**. That warning
    appears because you wrote the script yourself and Google hasn't reviewed
    it. It only ever touches this one spreadsheet.
-5. Go back to the spreadsheet tab. You'll now see **Daily Counts** and **Tap
+7. Go back to the spreadsheet tab. You'll now see **Daily Counts** and **Tap
    Log**.
+
+**If `setup` shows an error:**
+
+- *"Only part of Code.gs was pasted"*, or anything ending **"is not
+  defined"** (like `TIME_ZONE is not defined`): the top of the file didn't
+  make it into the editor. Go back to step 3, empty the editor, and paste
+  the whole file again.
+- *"Syntax error"* when you press Save: the paste was cut off partway
+  through. Same fix: empty the editor and paste the whole file again.
 
 ### Step 2: Turn the script into a web address
 

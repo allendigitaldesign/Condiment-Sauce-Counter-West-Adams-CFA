@@ -159,3 +159,51 @@ test('the item list in the app and in the script match exactly', () => {
 
   assert.deepEqual(fromApp, fromScript);
 });
+
+test('the file starts and ends with the markers people check after pasting', () => {
+  const lines = readFileSync(new URL('../apps-script/Code.gs', import.meta.url), 'utf8')
+    .trimEnd()
+    .split('\n');
+  assert.match(lines[0], /^\/\/ ===== START OF Code\.gs/);
+  assert.match(lines.at(-1), /^\/\/ ===== END OF Code\.gs/);
+});
+
+test('a paste missing the top of the file says so in plain words', () => {
+  const lines = readFileSync(new URL('../apps-script/Code.gs', import.meta.url), 'utf8').split('\n');
+  const firstSetting = lines.findIndex((l) => l.startsWith('var TIME_ZONE')) + 1;
+  let checked = 0;
+
+  // Try a paste that starts at every single line of the file.
+  for (let fromLine = 1; fromLine <= lines.length; fromLine++) {
+    let script;
+    try {
+      ({ script } = loadScript({ fromLine }));
+    } catch (err) {
+      // Cut mid-statement: the editor refuses to save it, and says where.
+      assert.equal(err.name, 'SyntaxError', `paste from line ${fromLine}: ${err.message}`);
+      continue;
+    }
+    if (typeof script.setup !== 'function') continue; // nothing to run
+
+    let message = null;
+    try {
+      script.setup();
+    } catch (err) {
+      message = String(err.message);
+    }
+
+    if (fromLine <= firstSetting) {
+      assert.equal(message, null, `paste from line ${fromLine} should work`);
+    } else {
+      checked++;
+      assert.match(message ?? '', /Only part of Code\.gs was pasted/, `paste from line ${fromLine}`);
+      if (typeof script.doGet === 'function') {
+        assert.match(
+          String(script.doGet({ parameter: {} }).getContent()),
+          /Only part of Code\.gs was pasted/,
+        );
+      }
+    }
+  }
+  assert.ok(checked > 20);
+});

@@ -1,31 +1,6 @@
-/**
- * Sauce & Condiment Counter — the Google Sheet side.
- *
- * Paste this whole file into the Sheet's Apps Script editor (Extensions →
- * Apps Script), run `setup` once, then deploy it as a web app. The README has
- * the clicks. The iPads (and any other device) talk to the web app address; nothing else is needed.
- *
- * WHAT IT KEEPS
- *
- *   Daily Counts  one row per day, one column per item, plus a Total. The row
- *                 for a day appears the first time anyone taps that day.
- *   Tap Log       every change as it arrives — when, which item, how many —
- *                 so a correction can always be traced.
- *
- * Every device using the app — any number of iPads or phones — counts into
- * the same numbers. None of them is told apart.
- *
- * THREE THINGS IT IS CAREFUL ABOUT
- *
- *  1. Two devices tapping at the same moment. Every write happens inside the
- *     script lock, so one waits for the other instead of both reading "12",
- *     both adding one, and both writing "13".
- *  2. A tap sent twice. An iPad whose wifi drops mid-send cannot know whether
- *     the Sheet got it, so it sends again. Each batch carries an id, and an id
- *     seen in the last six hours is answered without being counted again.
- *  3. Which day it is. Days are worked out in America/Los_Angeles, never UTC,
- *     so a late close isn't counted as tomorrow.
- */
+// ===== START OF Code.gs (Sauce Counter) =====
+// Paste ALL of this file into the Sheet's Apps Script editor: from this line
+// down to the "END OF Code.gs" line at the very bottom. See README, Step 1.
 
 var TIME_ZONE = 'America/Los_Angeles';
 var COUNTS_SHEET = 'Daily Counts';
@@ -99,17 +74,50 @@ var CATEGORIES = [
 ];
 
 /** id → { label, category }, built once from the list above. */
-var ITEMS = (function () {
-  var out = {};
-  CATEGORIES.forEach(function (category) {
-    category.items.forEach(function (pair) {
-      out[pair[0]] = { label: pair[1], category: category.label };
-    });
-  });
-  return out;
-})();
+var ITEMS =
+  typeof CATEGORIES === 'undefined'
+    ? {} // only part of the file was pasted — checkWholeFilePasted_ says so
+    : (function () {
+        var out = {};
+        CATEGORIES.forEach(function (category) {
+          category.items.forEach(function (pair) {
+            out[pair[0]] = { label: pair[1], category: category.label };
+          });
+        });
+        return out;
+      })();
 
-var ITEM_IDS = Object.keys(ITEMS);
+var ITEM_IDS = typeof ITEMS === 'undefined' ? [] : Object.keys(ITEMS);
+
+/**
+ * HOW IT WORKS
+ *
+ * Paste this whole file into the Sheet's Apps Script editor (Extensions →
+ * Apps Script), run `setup` once, then deploy it as a web app. The README has
+ * the clicks. Every device using the app talks to the web app address;
+ * nothing else is needed.
+ *
+ * WHAT IT KEEPS
+ *
+ *   Daily Counts  one row per day, one column per item, plus a Total. The row
+ *                 for a day appears the first time anyone taps that day.
+ *   Tap Log       every change as it arrives — when, which item, how many —
+ *                 so a correction can always be traced.
+ *
+ * Every device using the app — any number of iPads or phones — counts into
+ * the same numbers. None of them is told apart.
+ *
+ * THREE THINGS IT IS CAREFUL ABOUT
+ *
+ *  1. Two devices tapping at the same moment. Every write happens inside the
+ *     script lock, so one waits for the other instead of both reading "12",
+ *     both adding one, and both writing "13".
+ *  2. A tap sent twice. An iPad whose wifi drops mid-send cannot know whether
+ *     the Sheet got it, so it sends again. Each batch carries an id, and an id
+ *     seen in the last six hours is answered without being counted again.
+ *  3. Which day it is. Days are worked out in America/Los_Angeles, never UTC,
+ *     so a late close isn't counted as tomorrow.
+ */
 
 /* --- The web app ---------------------------------------------------------- */
 
@@ -145,6 +153,7 @@ function doPost(e) {
 function respond(work) {
   var out;
   try {
+    checkWholeFilePasted_();
     out = work();
     out.ok = true;
   } catch (err) {
@@ -415,6 +424,7 @@ function logChanges(ss, day, applied) {
  * never touches a count, and only adds headings that are missing.
  */
 function setup() {
+  checkWholeFilePasted_();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   ss.setSpreadsheetTimeZone(TIME_ZONE);
   var counts = ensureCountsSheet(ss);
@@ -433,3 +443,35 @@ function onOpen() {
     .addItem('Set up / repair the tabs', 'setup')
     .addToUi();
 }
+
+/**
+ * Kept at the very bottom on purpose: any paste that reaches `setup` also
+ * reaches this, so the check is there whenever it is needed.
+ *
+ * Stops with a plain message if the top of this file didn't make it into the
+ * editor. Copying a long file — especially on an iPad — easily drops its first
+ * lines, and the error Google shows for that ("TIME_ZONE is not defined")
+ * says nothing about what actually went wrong.
+ *
+ * `typeof` is used because it is the one way to ask about a name that may
+ * never have been declared without that question itself being the error.
+ */
+function checkWholeFilePasted_() {
+  if (
+    typeof TIME_ZONE === 'undefined' ||
+    typeof COUNTS_SHEET === 'undefined' ||
+    typeof LOG_SHEET === 'undefined' ||
+    typeof CATEGORIES === 'undefined' ||
+    typeof ITEMS === 'undefined' ||
+    typeof ITEM_IDS === 'undefined' ||
+    ITEM_IDS.length === 0
+  ) {
+    throw new Error(
+      'Only part of Code.gs was pasted. Delete everything in this editor, paste the ' +
+        'whole file again (it starts with "===== START OF Code.gs" and ends with ' +
+        '"===== END OF Code.gs"), press Save, and run setup again.',
+    );
+  }
+}
+
+// ===== END OF Code.gs — if you can see this, everything was pasted =====

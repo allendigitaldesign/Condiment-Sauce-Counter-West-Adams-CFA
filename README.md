@@ -142,6 +142,10 @@ touches them. Only changes to the app itself need publishing.
 
 ### Step 4: Set up the iPads
 
+`docs/sauce-counter-qr.html` is a printable card with a QR code for the app.
+Scan it with an iPad's Camera instead of typing the address. The bare code is
+`docs/sauce-counter-qr.png`.
+
 On each iPad (or any other device that should count):
 
 1. Open **https://allendigitaldesign.github.io/Condiment-Sauce-Counter-West-Adams-CFA/**

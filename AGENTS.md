@@ -33,7 +33,7 @@ name, nothing in the Tap Log saying where a tap came from. Every device adds
 into the same daily tallies. The owner asked for exactly that, so don't
 reintroduce per-device labels without asking. At `≥900px` the
 sections sit in two columns (`LANDSCAPE_COLUMNS` in `src/items.ts`) and fill
-the screen exactly. **All 31 items must fit at 1133×744 (iPad mini landscape)
+the screen exactly. **All 32 items must fit at 1133×744 (iPad mini landscape)
 with no scrolling.** If you add an item or anything to the header, check that
 it still does. Below 900px it becomes a scrolling page (4 tiles across on
 portrait, 2 on a phone).

@@ -25,6 +25,7 @@ var CATEGORIES = [
       ['sriracha', 'Sriracha'],
       ['honey-mustard', 'Honey Mustard'],
       ['honey-roasted-bbq', 'Honey Roasted BBQ'],
+      ['syrup', 'Syrup'],
     ],
   },
   {

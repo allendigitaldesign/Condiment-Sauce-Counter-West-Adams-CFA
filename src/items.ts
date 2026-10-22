@@ -29,6 +29,7 @@ export const CATEGORIES: Category[] = [
       { id: 'sriracha', label: 'Sriracha' },
       { id: 'honey-mustard', label: 'Honey Mustard' },
       { id: 'honey-roasted-bbq', label: 'Honey Roasted BBQ' },
+      { id: 'syrup', label: 'Syrup' },
     ],
   },
   {

@@ -1,0 +1,637 @@
+/* ===========================================================================
+   Sauce & Condiment Counter — Chick-fil-A West Adams
+
+   Styled to match the Care Calendar: brand red #E51636, text in three weights
+   of that red for hierarchy, on warm cream so the red never vibrates.
+   Built for an iPad standing at the Front Counter or the Drive Thru, tapped
+   all shift long — so the tiles are as big as the screen allows.
+   =========================================================================== */
+
+:root {
+  --red: #e51636;
+  --red-dark: #c01230;
+  --red-muted: #b3123b;
+  --red-light: #c9758a;
+
+  --cream: #faf7f2;
+  --border: #e7dfd3;
+  --white: #ffffff;
+
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(90, 20, 35, 0.06), 0 4px 14px rgba(90, 20, 35, 0.05);
+
+  --tap: 48px; /* smallest thing worth aiming a thumb at */
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--red-muted);
+  overscroll-behavior-y: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  /* No double-tap-to-zoom delay: two quick taps are two sauces, not a zoom. */
+  touch-action: manipulation;
+}
+
+/* --- App shell ----------------------------------------------------------- */
+
+.app {
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app.has-banner {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--red);
+  color: var(--white);
+  padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+  box-shadow: 0 2px 12px rgba(140, 15, 40, 0.18);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.header .subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.header-link {
+  background: rgba(255, 255, 255, 0.16);
+  border: none;
+  color: var(--white);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.header-link:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.header-link.is-icon {
+  padding: 8px 10px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.header-titles {
+  min-width: 0;
+}
+
+/* On a phone the title gets the whole first line and the buttons drop below
+   it, rather than squeezing the title into a column one word wide. */
+@media (max-width: 699px) {
+  .header-top {
+    flex-wrap: wrap;
+  }
+
+  .header-titles {
+    flex: 1 1 100%;
+  }
+}
+
+.header-total {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0.92;
+  font-variant-numeric: tabular-nums;
+}
+
+.header-total strong {
+  font-size: 17px;
+  font-weight: 800;
+  margin-right: 2px;
+}
+
+/* --- Live / Saving / Offline --------------------------------------------- */
+
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--white);
+}
+
+.sync-pill i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.sync-pill.is-saving i,
+.sync-pill.is-loading i {
+  animation: pulse 900ms ease-in-out infinite;
+}
+
+/* Offline is the one state someone should notice from a step away, so it
+   leaves the header's red-on-red and goes the amber of the Care Calendar's
+   nudge bar. */
+.sync-pill.is-offline {
+  background: #fff4e0;
+  color: #8a5208;
+}
+
+.sync-pill.is-offline i {
+  background: #dda94f;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* --- Sections and tiles -------------------------------------------------- */
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Before the Sheet has answered, the numbers are this iPad's own taps only. */
+.columns.is-partial .tile-count {
+  opacity: 0.55;
+}
+
+.section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 12px 12px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px 8px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-light);
+}
+
+.section-total {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red-light);
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+}
+
+.tile-add {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--red-muted);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: transform 90ms ease, border-color 120ms ease;
+}
+
+.tile-add:active {
+  transform: scale(0.96);
+  border-color: var(--red);
+}
+
+.tile.has-count .tile-add {
+  background: var(--white);
+}
+
+.tile-name {
+  position: relative;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  /* Whole words only. "Strawberry" broken as "Strawberr / y" is harder to
+     find at a glance than one that runs a little long. */
+  overflow-wrap: normal;
+  hyphens: manual;
+}
+
+.tile-count {
+  position: relative;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--red-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.tile.has-count .tile-count {
+  color: var(--red);
+}
+
+.tile-count.is-bumped {
+  animation: count-pop 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes count-pop {
+  40% {
+    transform: scale(1.22);
+  }
+}
+
+/* The flash that says "that one counted" — the main signal, since an iPad
+   can't vibrate and the first tap after a reload makes no sound. */
+.tile-flash {
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  opacity: 0;
+  pointer-events: none;
+  animation: tile-flash 420ms ease-out;
+}
+
+.tile-flash.is-minus {
+  background: #8a7f74;
+}
+
+@keyframes tile-flash {
+  0% {
+    opacity: 0.22;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Bottom right, level with the number it changes and clear of the name. */
+.tile-minus {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--red-muted);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile-minus:active:not(:disabled) {
+  background: var(--cream);
+  border-color: var(--red-light);
+}
+
+.tile-minus:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- Messages and footer ------------------------------------------------- */
+
+.notice {
+  margin: 12px 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.45;
+  background: #fdecef;
+  border: 1px solid #f6c9d2;
+  color: var(--red-muted);
+}
+
+.notice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notice-close {
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  color: var(--red-muted);
+  padding: 6px 8px;
+  border-radius: 999px;
+}
+
+.footer {
+  padding: 4px 16px 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--red-light);
+}
+
+.footer a {
+  color: var(--red);
+  font-weight: 700;
+}
+
+/* --- Panels and buttons -------------------------------------------------- */
+
+.panel {
+  margin: 16px;
+  padding: 18px 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel h2 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  color: var(--red);
+}
+
+.panel p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--red-light);
+}
+
+.button {
+  min-height: var(--tap);
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 18px;
+}
+
+.button:hover {
+  background: var(--red-dark);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button.secondary {
+  background: var(--white);
+  color: var(--red);
+  border: 1px solid var(--border);
+}
+
+.button.secondary:hover {
+  background: var(--cream);
+}
+
+/* Stacked buttons in a panel — sign in, create an account, forgotten password
+   — would otherwise sit flush against each other. Scoped to .panel on purpose:
+   the Save/Sign out pair at the foot of the editor is a flex row with its own
+   gap, and a top margin there would knock the two out of line. */
+/* --- Demo mode ---------------------------------------------------------- */
+
+.demo-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: #24201f;
+  color: #f3ece6;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  font-size: 13px;
+  line-height: 1.45;
+  box-shadow: 0 -2px 14px rgba(0, 0, 0, 0.18);
+}
+
+.demo-banner-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.demo-banner button {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 7px 13px;
+}
+
+.demo-banner button:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.demo-banner-detail {
+  max-width: 700px;
+  margin: 8px auto 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 8px;
+}
+
+.demo-banner-detail p {
+  margin: 0 0 8px;
+  color: #cfc4bc;
+}
+
+.demo-banner-detail p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- iPad portrait ------------------------------------------------------- */
+
+@media (min-width: 560px) {
+  .columns {
+    padding: 14px 16px;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* --- iPad landscape -------------------------------------------------------
+
+   The two sides of LANDSCAPE_COLUMNS in src/items.ts side by side: sauces and
+   dressings on the left, everything else on the right. All 31 items fit on an
+   iPad mini (1133×744) without scrolling — if you add anything to the header
+   or an item to the list, check that it still does. */
+
+@media (min-width: 900px) {
+  /* The counter fills the screen exactly: no scrolling, and no dead space
+     under the tiles that could have made them bigger. */
+  .app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .columns {
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .column {
+    flex: 1 1 0;
+  }
+
+  /* Spare height is shared out by rows of tiles (--rows, set per section),
+     so every tile on a side ends up the same height. */
+  .column .section {
+    flex: var(--rows, 1) 1 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tiles {
+    flex: 1 1 auto;
+    grid-auto-rows: 1fr;
+  }
+
+  .tile-count {
+    font-size: 34px;
+  }
+}
+
+/* Short landscape screens (iPad mini, 744pt tall): tighten the chrome so a
+   whole column still fits. */
+@media (min-width: 900px) and (max-height: 850px) {
+  .header {
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: 10px;
+  }
+
+  .columns,
+  .column {
+    gap: 10px;
+  }
+
+  .columns {
+    padding: 10px 14px;
+  }
+
+  .section {
+    padding: 8px 10px 10px;
+  }
+
+  .section-head {
+    padding-bottom: 6px;
+  }
+
+  .tiles {
+    gap: 6px;
+  }
+
+  .tile-add {
+    min-height: 70px;
+    padding: 8px 10px;
+  }
+
+  .tile-count {
+    font-size: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

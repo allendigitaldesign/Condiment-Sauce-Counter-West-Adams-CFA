@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- A dipping-sauce cup, lid peeling back, with a tally on its side. Kept
+       inside the middle 80% circle, because the manifest offers the 512 as
+       maskable and Android crops it. -->
+  <rect width="512" height="512" fill="#E51636"/>
+  <!-- peeled lid, lifting from the right -->
+  <path d="M112 214C112 204 120 198 130 198H300L392 150C402 145 414 150 416 161L420 178C422 188 416 196 406 198L330 214Z" fill="#FFFFFF"/>
+  <!-- cup: short and wide -->
+  <path d="M100 230H412C420 230 425 237 423 245L392 362C389 374 378 382 366 382H146C134 382 123 374 120 362L89 245C87 237 92 230 100 230Z" fill="#FFFFFF"/>
+  <!-- tally marks -->
+  <g stroke="#E51636" stroke-width="15" stroke-linecap="round">
+    <line x1="206" y1="264" x2="206" y2="346"/>
+    <line x1="238" y1="264" x2="238" y2="346"/>
+    <line x1="270" y1="264" x2="270" y2="346"/>
+    <line x1="302" y1="264" x2="302" y2="346"/>
+    <line x1="186" y1="334" x2="322" y2="276"/>
+  </g>
+</svg>

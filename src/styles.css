@@ -277,6 +277,8 @@ button {
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
+  /* No "copy / look up" bubble on a press and hold: that opens the number pad. */
+  -webkit-touch-callout: none;
   transition: transform 90ms ease, border-color 120ms ease;
 }
 
@@ -375,6 +377,113 @@ button {
 .tile-minus:disabled {
   opacity: 0;
   pointer-events: none;
+}
+
+/* --- Number pad (press and hold a tile) --------------------------------- */
+
+.pad-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(60, 20, 30, 0.38);
+  animation: pad-fade 140ms ease-out;
+}
+
+.pad {
+  width: min(340px, 100%);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(90, 20, 35, 0.25);
+  padding: 14px 16px 16px;
+  outline: none;
+}
+
+.pad-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pad-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--red);
+}
+
+.pad-close {
+  border: none;
+  background: transparent;
+  color: var(--red-muted);
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: -8px;
+}
+
+.pad-amount {
+  margin: 6px 0 12px;
+  padding: 10px 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: right;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+}
+
+.pad-amount.is-empty {
+  color: var(--red-light);
+}
+
+.pad-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pad-key {
+  min-height: 58px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--red-muted);
+  font-size: 24px;
+  font-weight: 700;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.pad-key:active {
+  background: var(--white);
+  border-color: var(--red);
+}
+
+.pad-key.is-quiet {
+  background: var(--white);
+  color: var(--red-light);
+  font-size: 20px;
+}
+
+.pad-add {
+  min-height: 56px;
+  font-size: 17px;
+}
+
+@keyframes pad-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 /* --- Messages and footer ------------------------------------------------- */
@@ -548,7 +657,7 @@ button {
 /* --- iPad landscape -------------------------------------------------------
 
    The two sides of LANDSCAPE_COLUMNS in src/items.ts side by side: sauces and
-   dressings on the left, everything else on the right. All 31 items fit on an
+   dressings on the left, everything else on the right. All 33 items fit on an
    iPad mini (1133×744) without scrolling — if you add anything to the header
    or an item to the list, check that it still does. */
 

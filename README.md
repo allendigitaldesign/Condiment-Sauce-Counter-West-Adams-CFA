@@ -21,15 +21,18 @@ opens like a normal app.
 
 | Section | Items |
 | --- | --- |
-| Sauces | CFA Sauce, Ranch, BBQ, Polynesian, Sriracha, Honey Mustard, Honey Roasted BBQ, Syrup |
+| Sauces | CFA Sauce, Ranch, BBQ, Polynesian, Sriracha, Honey Mustard, Buffalo, Syrup |
 | Dressings | Avocado Lime Ranch, Garden & Herb Ranch, FF Honey Mustard, Light Balsamic, Light Italian, Zesty Apple Cider, Creamy Salsa |
-| Condiments | Ketchup, Mayo, Mustard, Grape Jelly, Strawberry Jelly, Honey, Texas Pete, Salsa, Salt, Pepper |
+| Condiments | Ketchup, Mayo, Mustard, Grape Jelly, Strawberry Jelly, Honey, Texas Pete, Salsa, Honey Roasted BBQ, Salt, Pepper |
 | Coffee Condiments | Half & Half, French Vanilla, Sugar, Splenda |
 | Utensils | Forks, Knives, Spoons |
 
 ## Using it
 
 - **Tap an item** to add one. The tile flashes and clicks so you know it counted.
+- **Handing out a lot at once?** Press and hold an item for half a second. A
+  number pad opens: type how many (up to 999) and press **Add**. It counts
+  just as if you'd tapped that many times.
 - **Tapped by mistake?** Press the small **−** in the tile's bottom corner. It
   only appears once an item has a count, and it never goes below zero.
 - The number in each section's corner is that section's total. The number in
@@ -153,7 +156,7 @@ On each iPad (or any other device that should count):
 2. Open it from the home screen. That's it. There's nothing to choose, and it
    starts counting into the shared tallies straight away.
 3. **Settings → Display & Brightness → Auto-Lock → Never** if it sits on a
-   stand. Landscape works best, since all 32 items fit on one screen.
+   stand. Landscape works best, since all 33 items fit on one screen.
 
 ---
 
@@ -202,11 +205,12 @@ version** (see Step 2). A new item gets its own new column on the end of
 | File | What it does |
 | --- | --- |
 | `apps-script/Code.gs` | The Sheet side: reads and adds to the day's counts, writes the Tap Log |
-| `src/items.ts` | The 32 items and the sections they sit in |
+| `src/items.ts` | The 33 items and the sections they sit in |
 | `src/store.ts` | Holds taps, sends them in batches, asks the Sheet for the other iPad's taps |
 | `src/backend.ts` | Talks to the Sheet, or to the browser in demo mode |
 | `src/screens/CounterScreen.tsx` | The counter itself |
-| `src/components/ItemTile.tsx` | One item's tile, with its − button |
+| `src/components/ItemTile.tsx` | One item's tile, with its − button and press-and-hold |
+| `src/components/AmountPad.tsx` | The number pad that press-and-hold opens |
 | `src/styles.css` | All the styling, using the Care Calendar's colours |
 | `scripts/mock-sheet.mjs` | A pretend Sheet for trying it out locally |
 | `scripts/apps-script.test.mjs` | The tests for `Code.gs` |

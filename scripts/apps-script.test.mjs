@@ -33,7 +33,7 @@ test('setup builds both tabs with every item as a column, in order', () => {
   assert.equal(header[0], 'Date');
   assert.equal(header[1], 'CFA Sauce');
   assert.equal(header.at(-1), 'Total');
-  assert.equal(header.length, 32 + 2);
+  assert.equal(header.length, 33 + 2);
 });
 
 test('running setup again changes nothing', () => {

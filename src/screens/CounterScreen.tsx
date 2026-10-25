@@ -15,7 +15,7 @@ export function CounterScreen() {
 
   const total = Object.values(state.counts).reduce((a, b) => a + b, 0);
 
-  function change(id: string, by: 1 | -1): boolean {
+  function change(id: string, by: number): boolean {
     const ok = tap(id, by);
     if (ok) {
       if (by > 0) counted();
@@ -88,7 +88,8 @@ export function CounterScreen() {
       </main>
 
       <footer className="footer">
-        Counts start again at zero each day. Every tap is saved to the Google Sheet
+        Press and hold an item to type in how many. Counts start again at zero
+        each day. Every tap is saved to the Google Sheet
         {backend.demo ? ' once it is connected' : ''}.
         {state.sheetUrl && (
           <>
@@ -110,7 +111,7 @@ function Section({
 }: {
   category: Category;
   counts: CounterState['counts'];
-  onChange(id: string, by: 1 | -1): boolean;
+  onChange(id: string, by: number): boolean;
 }) {
   const subtotal = category.items.reduce((sum, item) => sum + (counts[item.id] ?? 0), 0);
 

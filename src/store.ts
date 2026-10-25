@@ -37,6 +37,7 @@ const LAST_KEY = 'cfa-counter:last';
 const SEND_AFTER_MS = 500;
 const POLL_EVERY_MS = 3000;
 const DAY_CHECK_MS = 15000;
+const MAX_PER_BATCH = 500;
 
 export type SyncStatus = 'loading' | 'live' | 'saving' | 'offline';
 
@@ -139,14 +140,16 @@ function saveQueue(): void {
 /* --- Tapping -------------------------------------------------------------- */
 
 /**
- * Count one more (or one fewer) of an item. Returns false for a "−" on
- * something already at zero.
+ * Count more (or fewer) of an item: one for a tap, or a typed-in amount from
+ * pressing and holding. Returns false for a change that would take the count
+ * below zero.
  *
  * Taps are taken even before the Sheet has answered — wifi down at opening is
  * exactly when nobody should have to stop and write counts on paper.
  */
-export function tap(id: string, change: 1 | -1): boolean {
-  if (change < 0 && (snapshot.counts[id] ?? 0) <= 0) return false;
+export function tap(id: string, change: number): boolean {
+  if (!Number.isInteger(change) || change === 0) return false;
+  if (change < 0 && (snapshot.counts[id] ?? 0) + change < 0) return false;
 
   const day = (queue.pending[today] ??= {});
   day[id] = (day[id] ?? 0) + change;
@@ -178,8 +181,10 @@ async function send(): Promise<void> {
     // Oldest day first, so last night's offline taps go before this morning's.
     const day = Object.keys(queue.pending).sort()[0];
     if (!day) return;
-    queue.inFlight = { opId: newOpId(), date: day, deltas: queue.pending[day] };
-    delete queue.pending[day];
+    const { now, later } = splitBatch(queue.pending[day]);
+    queue.inFlight = { opId: newOpId(), date: day, deltas: now };
+    if (later) queue.pending[day] = later;
+    else delete queue.pending[day];
     saveQueue();
   }
 
@@ -215,6 +220,23 @@ async function send(): Promise<void> {
   status = 'live';
   changed();
   if (Object.keys(queue.pending).length) scheduleSend(SEND_AFTER_MS);
+}
+
+/**
+ * The script refuses a batch that changes one item by more than
+ * MAX_PER_BATCH (`cleanDeltas` in Code.gs), and a refused batch is dropped.
+ * Typed-in amounts can add up past that, so anything over it waits for the
+ * next batch instead.
+ */
+function splitBatch(deltas: Counts): { now: Counts; later: Counts | null } {
+  const now: Counts = {};
+  const later: Counts = {};
+  for (const [id, n] of Object.entries(deltas)) {
+    const part = Math.max(-MAX_PER_BATCH, Math.min(MAX_PER_BATCH, n));
+    now[id] = part;
+    if (n !== part) later[id] = n - part;
+  }
+  return { now, later: Object.keys(later).length ? later : null };
 }
 
 function remember(date: string, counts: Counts, sheetUrl?: string): void {

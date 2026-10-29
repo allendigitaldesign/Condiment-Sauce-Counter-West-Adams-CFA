@@ -44,6 +44,14 @@ portrait, 2 on a phone).
   `apps-script/Code.gs`. Ids must match exactly, or taps on the mismatched
   item are silently dropped by the script. `npm test` compares them, and CI
   runs it.
+- **Every item needs an icon** in `src/icons.ts` (64×64 SVG insides, keyed
+  by item id; `npm test` checks). They were drawn to match the pictures on
+  the store's bin labels and approved one by one by the owner, so ask before
+  redrawing any. The icon takes the top-right corner of the tile, which is
+  why landscape tiles are slightly tighter (`padding: 8px 12px`, name
+  `line-height: 1.15`): without that, "Honey Roasted BBQ" wraps to three
+  lines and the iPad mini scrolls by 16px. "Strawberry" only just fits
+  beside the icon.
 - **The Sheet finds columns by the header label**, not by position. Renaming
   a label starts a new column, and the old one stops updating. Missing labels
   get appended automatically.

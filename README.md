@@ -184,7 +184,8 @@ Open the page in two browser windows to see them stay in step.
 <http://localhost:8787/sheet> shows what the pretend Sheet holds.
 
 `npm test` runs the Sheet script against a pretend spreadsheet and checks the
-item list in the app matches the one in the script.
+item list in the app matches the one in the script, and that every item has
+an icon.
 
 ---
 
@@ -200,12 +201,17 @@ app, and paste the new `Code.gs` into the Apps Script editor as a **new
 version** (see Step 2). A new item gets its own new column on the end of
 **Daily Counts** automatically. Nothing in the Sheet needs touching.
 
+A new item also needs an icon in `src/icons.ts`, under the same id (`npm test`
+fails without one). The icons are drawn to match the pictures on the store's
+bin labels.
+
 ## How it's put together
 
 | File | What it does |
 | --- | --- |
 | `apps-script/Code.gs` | The Sheet side: reads and adds to the day's counts, writes the Tap Log |
 | `src/items.ts` | The 33 items and the sections they sit in |
+| `src/icons.ts` | The little picture in the corner of each item's tile |
 | `src/store.ts` | Holds taps, sends them in batches, asks the Sheet for the other iPad's taps |
 | `src/backend.ts` | Talks to the Sheet, or to the browser in demo mode |
 | `src/screens/CounterScreen.tsx` | The counter itself |

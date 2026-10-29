@@ -160,6 +160,19 @@ test('the item list in the app and in the script match exactly', () => {
   assert.deepEqual(fromApp, fromScript);
 });
 
+test('every item has an icon, and every icon an item', () => {
+  const items = [...readFileSync(new URL('../src/items.ts', import.meta.url), 'utf8')
+    .matchAll(/\{ id: '([^']+)', label: '[^']+' \}/g)].map((m) => m[1]);
+
+  // The keys of ICONS in src/icons.ts: the lines indented by exactly two
+  // spaces inside it.
+  const source = readFileSync(new URL('../src/icons.ts', import.meta.url), 'utf8');
+  const block = source.slice(source.indexOf('export const ICONS'));
+  const icons = [...block.matchAll(/^ {2}'?([a-z-]+)'?: /gm)].map((m) => m[1]);
+
+  assert.deepEqual([...icons].sort(), [...items].sort());
+});
+
 test('the file starts and ends with the markers people check after pasting', () => {
   const lines = readFileSync(new URL('../apps-script/Code.gs', import.meta.url), 'utf8')
     .trimEnd()

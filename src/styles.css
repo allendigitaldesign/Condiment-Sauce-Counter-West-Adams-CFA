@@ -291,8 +291,28 @@ button {
   background: var(--white);
 }
 
+/* The name, with the item's picture tucked into the top-right corner. */
+.tile-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2px;
+  width: 100%;
+}
+
+/* Pulled into the tile's corner padding, so the name loses as little room
+   as possible: "Strawberry" only just fits beside it on an iPad mini. */
+.tile-icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  margin: -3px -9px 0 0;
+}
+
 .tile-name {
   position: relative;
+  min-width: 0;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.2;
@@ -692,6 +712,18 @@ button {
   .tiles {
     flex: 1 1 auto;
     grid-auto-rows: 1fr;
+  }
+
+  /* A little tighter than on a phone. With the icons in, "Honey Roasted BBQ"
+     takes three lines, and at the looser spacing its row pushed the screen
+     16px past the bottom of an iPad mini. */
+  .tile-add {
+    padding: 8px 12px;
+    gap: 2px;
+  }
+
+  .tile-name {
+    line-height: 1.15;
   }
 
   .tile-count {

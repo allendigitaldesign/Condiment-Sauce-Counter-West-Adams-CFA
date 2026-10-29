@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import type { Item } from '../items';
 import { AmountPad } from './AmountPad';
+import { ICONS } from '../icons';
 
 /** How long a press has to last to open the number pad instead of adding one. */
 const HOLD_MS = 500;
@@ -96,7 +97,16 @@ export function ItemTile({ item, count, onChange }: Props) {
             aria-hidden="true"
           />
         )}
-        <span className="tile-name">{item.label}</span>
+        <span className="tile-top">
+          <span className="tile-name">{item.label}</span>
+          <svg
+            className="tile-icon"
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+            // Fixed drawings from src/icons.ts, never anything typed in.
+            dangerouslySetInnerHTML={{ __html: ICONS[item.id] ?? '' }}
+          />
+        </span>
         <span key={`n${bump}`} className={`tile-count${bump > 0 ? ' is-bumped' : ''}`}>
           {count}
         </span>

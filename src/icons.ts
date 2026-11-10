@@ -182,6 +182,9 @@ const wrapped = (utensil: string) => `
 export const ICONS: Record<string, string> = {
   // Sauces: lid colours from the bin labels.
   'cfa-sauce': sauceCup({ lid: '#fff', ink: '#D9456B', tab: '#E51636', sauce: '#E9A945' }),
+  // Not on the bin-label photos: the CFA Sauce cup with a red chili and a
+  // redder sauce, so the two read apart at a glance.
+  'spicy-cfa-sauce': `${sauceCup({ lid: '#fff', ink: '#D9456B', tab: '#E51636', sauce: '#E0662F' })}${at(40, 42, 0.95, chili('#E51636'))}`,
   ranch: sauceCup({ lid: '#4BA3E3', sauce: '#F5F2EA' }),
   bbq: sauceCup({ lid: '#D7263D', sauce: '#5A1E1A' }),
   polynesian: sauceCup({ lid: '#A23B97', sauce: '#D9542C' }),

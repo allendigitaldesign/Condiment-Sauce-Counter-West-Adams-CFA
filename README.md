@@ -156,7 +156,7 @@ On each iPad (or any other device that should count):
 2. Open it from the home screen. That's it. There's nothing to choose, and it
    starts counting into the shared tallies straight away.
 3. **Settings → Display & Brightness → Auto-Lock → Never** if it sits on a
-   stand. Landscape works best, since all 33 items fit on one screen.
+   stand. Landscape works best, since all 34 items fit on one screen.
 
 ---
 
@@ -210,7 +210,7 @@ bin labels.
 | File | What it does |
 | --- | --- |
 | `apps-script/Code.gs` | The Sheet side: reads and adds to the day's counts, writes the Tap Log |
-| `src/items.ts` | The 33 items and the sections they sit in |
+| `src/items.ts` | The 34 items and the sections they sit in |
 | `src/icons.ts` | The little picture in the corner of each item's tile |
 | `src/store.ts` | Holds taps, sends them in batches, asks the Sheet for the other iPad's taps |
 | `src/backend.ts` | Talks to the Sheet, or to the browser in demo mode |

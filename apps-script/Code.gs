@@ -19,6 +19,7 @@ var CATEGORIES = [
     label: 'Sauces',
     items: [
       ['cfa-sauce', 'CFA Sauce'],
+      ['spicy-cfa-sauce', 'Spicy CFA Sauce'],
       ['ranch', 'Ranch'],
       ['bbq', 'BBQ'],
       ['polynesian', 'Polynesian'],

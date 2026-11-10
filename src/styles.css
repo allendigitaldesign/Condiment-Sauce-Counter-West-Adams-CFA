@@ -677,7 +677,7 @@ button {
 /* --- iPad landscape -------------------------------------------------------
 
    The two sides of LANDSCAPE_COLUMNS in src/items.ts side by side: sauces and
-   dressings on the left, everything else on the right. All 33 items fit on an
+   dressings on the left, everything else on the right. All 34 items fit on an
    iPad mini (1133×744) without scrolling — if you add anything to the header
    or an item to the list, check that it still does. */
 

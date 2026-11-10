@@ -23,6 +23,7 @@ export const CATEGORIES: Category[] = [
     label: 'Sauces',
     items: [
       { id: 'cfa-sauce', label: 'CFA Sauce' },
+      { id: 'spicy-cfa-sauce', label: 'Spicy CFA Sauce' },
       { id: 'ranch', label: 'Ranch' },
       { id: 'bbq', label: 'BBQ' },
       { id: 'polynesian', label: 'Polynesian' },
